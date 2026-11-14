@@ -1,0 +1,36 @@
+{
+  "name": "kitchenwarroom",
+  "version": "1.0.0",
+  "description": "Application for the tracking of stats for pantry, fridge, and freezer goods and assisting in the tracking of recipes and weekly+ meal planning",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsx ./src/index.ts",
+    "reset": "tsx ./src/lib/db/queries/usersdelete.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kramdan/KitchenWarRoom.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kramdan/KitchenWarRoom/issues"
+  },
+  "homepage": "https://github.com/kramdan/KitchenWarRoom#readme",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^4.1.1"
+  }
+}
