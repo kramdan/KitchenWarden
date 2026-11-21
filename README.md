@@ -59,7 +59,8 @@ This will fail on first attempt, check setup section step 2 for instructions
 
 ```bash
 npm run build
-npm run start:build # This involves commands from the usage section above, it will do nothing otherwise.
+npm run start:build # This involves commands from the usage section above,
+                    # it will otherwise do nothing.
 ```
 
 ### Run tests
