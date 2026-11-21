@@ -5,7 +5,7 @@ Application for the tracking of stats for pantry, fridge, and freezer goods and 
 KitchenWarden is a webapp with the purpose of being able to contain, monitor, and manage as many aspects of the kitchen experience as possible. It utilizes a back-end server running Postgresql and hosting a website to allow users to access their own accounts and input their kitchens food stores, their locations, and amounts.
 
 ## Motivation
-KitchenWarden is a solution to my own scenario with using multiple spreadsheets to track my recipes, their costs, and the foods required to make them. It combines all aspects of the kitchen experience that I (and others I presume) find either tedious, complicated, or simplye interferes with our lives. It simplifies by automating a lot of the thinking and calculations that go into making food at home, and will hopefully be a tool many see as useful.
+KitchenWarden is a solution to my own scenario with using multiple spreadsheets to track my recipes, their costs, and the foods required to make them. It combines all aspects of the kitchen experience that I (and others I presume) find either tedious, complicated, or simply interferes with our lives. It simplifies by automating a lot of the thinking and calculations that go into making food at home, and will hopefully be a tool many see as useful.
 
 ## Quick Start
 Hopefully this ends up being no more than "log right on in and check it out", but until it is public, you can start your own.
