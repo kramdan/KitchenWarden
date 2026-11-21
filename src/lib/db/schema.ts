@@ -43,6 +43,9 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdate(() => new Date()),
   name: text("name").notNull().unique(),
+  email: text("email").unique(),
+  phoneNumber: numeric("phone_number").unique(),
+  password: text("password"),
 });
 
 export const foodItems = pgTable(
