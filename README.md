@@ -8,7 +8,7 @@ KitchenWarden is a webapp with the purpose of being able to contain, monitor, an
 KitchenWarden is a solution to my own scenario with using multiple spreadsheets to track my recipes, their costs, and the foods required to make them. It combines all aspects of the kitchen experience that I (and others I presume) find either tedious, complicated, or simply interferes with our lives. It simplifies by automating a lot of the thinking and calculations that go into making food at home, and will hopefully be a tool many see as useful.
 
 ## Quick Start
-Hopefully this ends up being no more than "log right on in and check it out", but until it is public, you can start your own.
+Eventually this ends up being no more than "log right on in and check it out", but until it is there, you can start your own.
 
 ### Prerequisites
 - Node.js 26 (see `.nvmrc`) and npm
@@ -68,6 +68,11 @@ npm run start:build # This involves commands from the usage section above,
 ```bash
 npm run test
 ```
+
+Currently there is no plan to allow for others to contribute directly to this project, but feel free to check it out and send bug reports if there are any
+
+## Using Agents
+Agents are used in this project, though not solely or extensively, and there are included in the project some files that can assist you if you choose to use them yourself. You take responsibility for anything the agent or model writes at your instruction, and anything written by AI must be reviewed by a human before believing it ready for production and/or distribution.
 
 ## Intended Development path (Psuedocode):
 
