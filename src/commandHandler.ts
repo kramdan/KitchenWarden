@@ -1,4 +1,4 @@
-import { getCurrentUser } from "./lib/db/queries/usercurrentget.js";
+import { getCurrentUser } from "./lib/db/queries/getCurrentUser.js";
 
 type LoggedInHandler = (
     cmdName: string,

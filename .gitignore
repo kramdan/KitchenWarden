@@ -6,3 +6,5 @@ node_modules/
 !.env.example
 *.log
 npm-debug.log*
+.vscode/
+src/kw.config.json

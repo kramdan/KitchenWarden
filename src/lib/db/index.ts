@@ -4,8 +4,8 @@ import postgres from "postgres";
 import * as schema from "./schema.js";
 import { readConfig } from "../../config.js";
 
-const dbUrl = readConfig();
-const conn = postgres(dbUrl);
+const cfg = readConfig();
+const conn = postgres(cfg.dbUrl);
 export const db = drizzle(conn, { schema });
 
 export async function closeDb(): Promise<void> {
