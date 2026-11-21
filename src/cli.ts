@@ -7,6 +7,7 @@ import { handlerLogin } from "./handlerLogin.js";
 import { handlerPassword } from "./handlerPassword.js";
 import { handlerPhone } from "./handlerPhone.js";
 import { handlerRegister } from "./handlerRegister.js";
+import { startServer } from "./server.js";
 
 
 export async function runCli(extraCommands: Record<string, CommandHandler> = {}) {
@@ -22,19 +23,10 @@ export async function runCli(extraCommands: Record<string, CommandHandler> = {})
         registerCommand(commandsReg, name, handler);
     }
 
-    const cmd = process.argv.slice(2);
+    startServer();
 
-    if (cmd.length == 0) {
-        const err =  new Error("Must insert a command and arguments 'command: arguments'");
-        console.log(err.message);
-        process.exitCode = 1;
-    } else {
-        const commandName = cmd[0];
-        await runCommand(commandsReg, commandName);
-    }
-    if (process.exitCode != 1) {
-        process.exit(0);
-    } else {
-        process.exit(1);
+    const cmd = process.argv.slice(2);
+    if (cmd.length > 0) {
+        await runCommand(commandsReg, cmd[0]);
     }
 }

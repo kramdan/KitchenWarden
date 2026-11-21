@@ -38,6 +38,9 @@ of an unrelated change.
 - Copy the example config to the local config path. That file is gitignored and
   holds local state, including the current user.
 - Environment variables can override the config and database paths.
+- Docker: run `npm run build`, then `docker build -t kitchenwarden .`. The image
+  runs `dist/` and needs the local config mounted at `/app/dist/kw.config.json`
+  at run time. Never bake the config into the image.
 
 ## Data and migrations
 
@@ -68,7 +71,7 @@ of an unrelated change.
   environment files. Read the lockfile only when diagnosing a dependency change.
 - Do not edit agent definitions, generated migrations, lockfiles, local config or
   data files, or binary assets unless the task requires it.
-- No network calls, telemetry, analytics, remote assets, or backend. Local-first
+- No network calls, telemetry, analytics, remote assets, or backend beyond the localhost-only Express static server in `src/server.ts` (started by `npm run start:dev`, or `npm run start:build` after build). Local-first
   is a product constraint, not an implementation detail.
 - Do not run database reset or user reset without explicit approval. Do not leave
   dev servers running.

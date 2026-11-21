@@ -1,0 +1,10 @@
+.git
+node_modules
+src
+tests
+data
+docs
+.vscode
+.opencode
+.env*
+**/kw.config.json
