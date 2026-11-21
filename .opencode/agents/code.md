@@ -15,6 +15,9 @@ permissions:
   - action: "subagent"
     resource: "cleanup"
     effect: allow
+  - action: "subagent"
+    resource: "test-writer"
+    effect: allow
   - action: "external_directory"
     resource: "*"
     effect: deny
@@ -53,6 +56,9 @@ permissions:
     effect: deny
   - action: "edit"
     resource: "src/kwr.config.json"
+    effect: deny
+  - action: "edit"
+    resource: "tests/**"
     effect: deny
   - action: "shell"
     resource: "npm run *"
@@ -149,7 +155,9 @@ commands, conventions, and boundaries for this repository.
 - Use the `security` subagent for read-only security audits. Use the `cleanup`
   subagent for read-only duplication, unused-code, CLI/mobile parity, and
   post-refactor verification analysis. Execute its plan in order and verify
-  after each step. Do not use other subagents or load skills.
+  after each step. Use the `test-writer` subagent for the creation of tests in
+  the `tests/` folder, running `npm run test` afterwards. Do not use other 
+  subagents or load skills.
 - Use web search or fetch only when the repository and its docs cannot answer
   the question. Do not fetch the same source twice.
 

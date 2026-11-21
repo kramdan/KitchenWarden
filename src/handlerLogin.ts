@@ -19,10 +19,12 @@ export async function handlerLogin(cmdName: string, ...args: string[]): Promise<
     if (user.password) {
         if (password == undefined) {
             console.error("password invalid");
+            process.exitCode = 1;
             return;
         }
         if (!await verifyPassword(password, user.password)) {
             console.error("password invalid");
+            process.exitCode = 1;
             return;
         }
     }

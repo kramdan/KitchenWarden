@@ -21,8 +21,10 @@ Run commands from the repository root.
 - Database reset and user reset are destructive. Do not run them without
   explicit approval.
 
-There is no lint, formatter, or test suite. The test command is a placeholder
-that fails; do not treat it as a check or add tooling without asking.
+There is no lint or formatter. `npm test` runs the Node test runner (built-in
+`node:test`, no added dependencies) over `tests/*.test.ts`. Tests must not touch
+the dev database or the local CLI config; mock those modules. Do not add other
+tooling without asking.
 
 ## Toolchain
 

@@ -1,7 +1,74 @@
-# KitchenWarRoom
+# KitchenWarden
 Application for the tracking of stats for pantry, fridge, and freezer goods and assisting in the tracking of recipes and weekly+ meal planning
 
-## Intended Development path (and Psuedo-Psuedocode):
+## Description
+KitchenWarden is a webapp with the purpose of being able to contain, monitor, and manage as many aspects of the kitchen experience as possible. It utilizes a back-end server running Postgresql and hosting a website to allow users to access their own accounts and input their kitchens food stores, their locations, and amounts.
+
+## Motivation
+KitchenWarden is a solution to my own scenario with using multiple spreadsheets to track my recipes, their costs, and the foods required to make them. It combines all aspects of the kitchen experience that I (and others I presume) find either tedious, complicated, or simplye interferes with our lives. It simplifies by automating a lot of the thinking and calculations that go into making food at home, and will hopefully be a tool many see as useful.
+
+## Quick Start
+Hopefully this ends up being no more than "log right on in and check it out", but until it is public, you can start your own.
+
+### Prerequisites
+- Node.js 26 (see `.nvmrc`) and npm
+- A running PostgreSQL server with an empty database, such as `kwr_dev`
+
+### Setup
+1. Install dependencies from the repository root:
+   ```
+   npm install
+   ```
+2. Copy the example config to the local config path (gitignored):
+   ```
+   cp src/kw.config.example.json src/kw.config.json
+   ```
+3. Edit `src/kw.config.json` and set `db_url` to your PostgreSQL connection string, for example `postgresql://USER:PASSWORD@127.0.0.1:5432/kwr_dev`. Leave `current_user_name` empty; the CLI fills it in.
+4. Apply the database migrations:
+   ```
+   npm run migrate
+   ```
+5. Register your profile. It becomes the current user:
+   ```
+   npm start -- register <username>
+   ```
+## Usage
+
+### Commands
+| Command | Purpose |
+|---|---|
+| `npm start -- register <username>` | Create a profile and make it the current user |
+| `npm start -- login <username> [password]` | Switch to an existing profile; the password is required if one is set |
+| `npm start -- list` | List all profiles with ID, email, and phone |
+| `npm start -- password <password>` | Set the current user's password |
+| `npm start -- email <address>` | Set the current user's email |
+| `npm start -- phone <number>` | Set the current user's phone number as 10 digits, e.g. `7036878555` |
+| `npm run typecheck` | Type-check the CLI codebase |
+
+## Contributing
+
+### Clone the repo
+
+```bash
+git clone https://github.com/kramdan/KitchenWarden@latest
+cd KitchenWarden
+```
+
+### Build and run the project
+This will fail on first attempt, check setup section step 2 for instructions
+
+```bash
+npm run build
+npm run start:build # This involves commands from the usage section above, it will do nothing otherwise.
+```
+
+### Run tests
+
+```bash
+npm run test
+```
+
+## Intended Development path (Psuedocode):
 
 1. Ingestion, sorting, and removal of food items
     - Food ingestion will be both manual and via barcode scanning. This will allow the product to be cataloged based off of producer's intentions as well as stats such as weight, nutritional facts, best-by/expiration dates, and more.

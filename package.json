@@ -4,8 +4,10 @@
   "description": "Application for the tracking of stats for pantry, fridge, and freezer goods and assisting in the tracking of recipes and weekly+ meal planning",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-test-module-mocks --import tsx --test tests/*.test.ts",
     "start": "tsx ./src/index.ts",
+    "build": "tsc",
+    "start:build": "node ./dist/index.js",
     "reset": "tsx ./src/lib/db/queries/usersdelete.ts",
     "typecheck": "npx tsc --noEmit",
     "generate": "drizzle-kit generate",

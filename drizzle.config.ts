@@ -4,7 +4,7 @@ import { defineConfig } from "drizzle-kit";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const filePath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'src/kw.config.json');
+const filePath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'kw.config.json');
 const cfg = JSON.parse(fs.readFileSync( filePath, 'utf-8' ));
 if (!cfg) throw new Error("No config found");
 
