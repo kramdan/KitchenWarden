@@ -43,22 +43,7 @@ permissions:
     resource: "src/**"
     effect: allow
   - action: "edit"
-    resource: "mobile/src/**"
-    effect: allow
-  - action: "edit"
-    resource: "mobile/App.tsx"
-    effect: allow
-  - action: "edit"
-    resource: "mobile/src/security/**"
-    effect: ask
-  - action: "edit"
-    resource: "mobile/src/session.ts"
-    effect: ask
-  - action: "edit"
     resource: ".opencode/*"
-    effect: deny
-  - action: "edit"
-    resource: "mobile/drizzle/**"
     effect: deny
   - action: "edit"
     resource: "src/lib/db/migrations/**"
@@ -89,9 +74,6 @@ permissions:
     effect: ask
   - action: "shell"
     resource: "npm run app:reset *"
-    effect: ask
-  - action: "shell"
-    resource: "npm run mobile:build:*"
     effect: ask
   - action: "shell"
     resource: "git *"
@@ -185,9 +167,7 @@ commands, conventions, and boundaries for this repository.
 - Make the smallest coherent change and match the style of the file you edit.
   Do not refactor unrelated code.
 - After a batch of edits, run the narrowest verification: `npm run typecheck`
-  for `src/`, `npm run mobile:typecheck` for `mobile/`, both when the shared
-  schema changes, and the matching `mobile:config:check` for Expo config
-  changes. If the schema changed, generate migrations and note the impact on
+  for `src/`. If the schema changed, generate migrations and note the impact on
   both codebases.
 - Lead with the result or recommendation, then the supporting detail. Report
   files changed, commands run with results, and follow-ups. Do not paste full
