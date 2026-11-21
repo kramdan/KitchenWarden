@@ -1,29 +1,26 @@
 import { setUser } from "./config.js";
 import { verifyPassword } from "./handlerPassword.js";
 import { getUser } from "./lib/db/queries/userget.js";
+import { promptSecret } from "./lib/prompt.js";
+import { promptText } from "./lib/promptText.js";
 
-export async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
-    const username = args[0]?.trim();
-    const password = args[1]?.trim();
+export async function handlerLogin(cmdName: string): Promise<void> {
+    const username = (await promptText("Enter username: ")).trim();
     if (!username) {
-        console.error("Error: No username provided. Usage: login <username>");
-        process.exitCode = 1;
-        return;
-    }
-    if (!(await getUser(username))) {
-        console.error(`Error: Username "${username}" not found.`);
+        console.error("Error: No username provided.");
         process.exitCode = 1;
         return;
     }
     const user = await getUser(username);
+    if (!user) {
+        console.error(`Error: Username "${username}" not found.`);
+        process.exitCode = 1;
+        return;
+    }
     if (user.password) {
-        if (password == undefined) {
-            console.error("password invalid");
-            process.exitCode = 1;
-            return;
-        }
-        if (!await verifyPassword(password, user.password)) {
-            console.error("password invalid");
+        const current = await promptSecret("Input current password: ");
+        if (!await verifyPassword(current, user.password)) {
+            console.error("Current password is incorrect");
             process.exitCode = 1;
             return;
         }

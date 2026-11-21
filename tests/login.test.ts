@@ -9,6 +9,12 @@ const verifyPassword = mock.fn(
     async (_password: string, _passwordHash: string): Promise<boolean> => false,
 );
 
+// Mocked so the test never reads from stdin. Only promptSecret is exported by its module.
+const promptSecret = mock.fn(async (_question: string): Promise<string> => "");
+
+// Mocked so the test never reads a username from stdin. Only promptText is exported by its module.
+const promptText = mock.fn(async (_question: string): Promise<string> => "");
+
 mock.module("../src/lib/db/queries/userget.js", {
     exports: { getUser },
 });
@@ -17,6 +23,12 @@ mock.module("../src/config.js", {
 });
 mock.module("../src/handlerPassword.js", {
     exports: { verifyPassword },
+});
+mock.module("../src/lib/prompt.js", {
+    exports: { promptSecret },
+});
+mock.module("../src/lib/promptText.js", {
+    exports: { promptText },
 });
 
 const { handlerLogin } = await import("../src/handlerLogin.js");
@@ -40,8 +52,11 @@ describe("handlerLogin", () => {
         getUser.mock.resetCalls();
         setUser.mock.resetCalls();
         verifyPassword.mock.resetCalls();
+        promptSecret.mock.resetCalls();
+        promptText.mock.resetCalls();
         getUser.mock.mockImplementation(async () => undefined);
         verifyPassword.mock.mockImplementation(async () => false);
+        promptSecret.mock.mockImplementation(async () => "");
         mock.method(console, "log", (msg: string) => { logs.push(msg); });
         mock.method(console, "error", (msg: string) => { errors.push(msg); });
     });
@@ -52,9 +67,10 @@ describe("handlerLogin", () => {
     });
 
     it("logs in a user without a password and sets them as the current user", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
         getUser.mock.mockImplementation(async () => openUsers.alice);
 
-        await handlerLogin("login", "alice");
+        await handlerLogin("login");
 
         assert.equal(verifyPassword.mock.callCount(), 0);
         assert.deepEqual(setUser.mock.calls[0].arguments, ["alice"]);
@@ -62,11 +78,22 @@ describe("handlerLogin", () => {
         assert.equal(process.exitCode, undefined);
     });
 
+    it("does not prompt for a password when the user has none", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
+        getUser.mock.mockImplementation(async () => openUsers.alice);
+
+        await handlerLogin("login");
+
+        assert.equal(promptSecret.mock.callCount(), 0);
+    });
+
     it("logs in a user with the correct password and sets them as the current user", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
         getUser.mock.mockImplementation(async () => passwordUser);
         verifyPassword.mock.mockImplementation(async () => true);
+        promptSecret.mock.mockImplementation(async () => "example-passphrase-1");
 
-        await handlerLogin("login", "alice", "example-passphrase-1");
+        await handlerLogin("login");
 
         assert.deepEqual(verifyPassword.mock.calls[0].arguments, [
             "example-passphrase-1",
@@ -81,8 +108,10 @@ describe("handlerLogin", () => {
     it("sets the new current user when logging in after a previous login", async () => {
         getUser.mock.mockImplementation(async (name: string) => openUsers[name]);
 
-        await handlerLogin("login", "alice");
-        await handlerLogin("login", "bob");
+        promptText.mock.mockImplementation(async () => "alice");
+        await handlerLogin("login");
+        promptText.mock.mockImplementation(async () => "bob");
+        await handlerLogin("login");
 
         assert.equal(setUser.mock.callCount(), 2);
         assert.deepEqual(setUser.mock.calls[0].arguments, ["alice"]);
@@ -90,26 +119,43 @@ describe("handlerLogin", () => {
         assert.equal(process.exitCode, undefined);
     });
 
-    it("rejects a missing username", async () => {
+    it("trims whitespace from the username", async () => {
+        promptText.mock.mockImplementation(async () => "  alice  ");
+        getUser.mock.mockImplementation(async () => openUsers.alice);
+
+        await handlerLogin("login");
+
+        assert.deepEqual(getUser.mock.calls[0].arguments, ["alice"]);
+        assert.deepEqual(setUser.mock.calls[0].arguments, ["alice"]);
+        assert.equal(process.exitCode, undefined);
+    });
+
+    it("rejects an empty username", async () => {
+        promptText.mock.mockImplementation(async () => "");
+
         await handlerLogin("login");
 
         assert.equal(getUser.mock.callCount(), 0);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["Error: No username provided. Usage: login <username>"]);
+        assert.deepEqual(errors, ["Error: No username provided."]);
         assert.equal(process.exitCode, 1);
     });
 
     it("rejects a blank username", async () => {
-        await handlerLogin("login", "   ");
+        promptText.mock.mockImplementation(async () => "   ");
+
+        await handlerLogin("login");
 
         assert.equal(getUser.mock.callCount(), 0);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["Error: No username provided. Usage: login <username>"]);
+        assert.deepEqual(errors, ["Error: No username provided."]);
         assert.equal(process.exitCode, 1);
     });
 
     it("rejects a username that is not registered", async () => {
-        await handlerLogin("login", "ghost");
+        promptText.mock.mockImplementation(async () => "ghost");
+
+        await handlerLogin("login");
 
         assert.deepEqual(getUser.mock.calls[0].arguments, ["ghost"]);
         assert.equal(setUser.mock.callCount(), 0);
@@ -118,25 +164,29 @@ describe("handlerLogin", () => {
     });
 
     it("rejects a wrong password without changing the current user", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
         getUser.mock.mockImplementation(async () => passwordUser);
         verifyPassword.mock.mockImplementation(async () => false);
+        promptSecret.mock.mockImplementation(async () => "wrong-passphrase-1");
 
-        await handlerLogin("login", "alice", "wrong-passphrase-1");
+        await handlerLogin("login");
 
         assert.equal(verifyPassword.mock.callCount(), 1);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["password invalid"]);
+        assert.deepEqual(errors, ["Current password is incorrect"]);
         assert.equal(process.exitCode, 1);
     });
 
-    it("rejects a missing password for a user that has one, without changing the current user", async () => {
+    it("rejects an empty password for a user that has one, without changing the current user", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
         getUser.mock.mockImplementation(async () => passwordUser);
+        promptSecret.mock.mockImplementation(async () => "");
 
-        await handlerLogin("login", "alice");
+        await handlerLogin("login");
 
-        assert.equal(verifyPassword.mock.callCount(), 0);
+        assert.deepEqual(verifyPassword.mock.calls[0].arguments, ["", "fake-hash-alice"]);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["password invalid"]);
+        assert.deepEqual(errors, ["Current password is incorrect"]);
         assert.equal(process.exitCode, 1);
     });
 });

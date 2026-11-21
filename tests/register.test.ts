@@ -6,6 +6,9 @@ const getUser = mock.fn(async (_username: string): Promise<unknown> => undefined
 const createUser = mock.fn(async (_username: string): Promise<unknown> => undefined);
 const setUser = mock.fn(async (_name: string): Promise<void> => undefined);
 
+// Mocked so the test never reads from stdin. Only promptText is exported by its module.
+const promptText = mock.fn(async (_question: string): Promise<string> => "");
+
 mock.module("../src/lib/db/queries/userget.js", {
     exports: { getUser },
 });
@@ -14,6 +17,9 @@ mock.module("../src/lib/db/queries/users.js", {
 });
 mock.module("../src/config.js", {
     exports: { setUser },
+});
+mock.module("../src/lib/promptText.js", {
+    exports: { promptText },
 });
 
 const { handlerRegister } = await import("../src/handlerRegister.js");
@@ -31,6 +37,7 @@ describe("handlerRegister", () => {
         getUser.mock.resetCalls();
         createUser.mock.resetCalls();
         setUser.mock.resetCalls();
+        promptText.mock.resetCalls();
         getUser.mock.mockImplementation(async () => undefined);
         mock.method(console, "log", (msg: string) => { logs.push(msg); });
         mock.method(console, "error", (msg: string) => { errors.push(msg); });
@@ -42,7 +49,9 @@ describe("handlerRegister", () => {
     });
 
     it("registers a new user and sets them as the current user", async () => {
-        await handlerRegister("register", "alice");
+        promptText.mock.mockImplementation(async () => "alice");
+
+        await handlerRegister("register");
 
         assert.equal(createUser.mock.callCount(), 1);
         assert.deepEqual(createUser.mock.calls[0].arguments, ["alice"]);
@@ -52,7 +61,9 @@ describe("handlerRegister", () => {
     });
 
     it("trims whitespace from the username", async () => {
-        await handlerRegister("register", "  alice  ");
+        promptText.mock.mockImplementation(async () => "  alice  ");
+
+        await handlerRegister("register");
 
         assert.deepEqual(getUser.mock.calls[0].arguments, ["alice"]);
         assert.deepEqual(createUser.mock.calls[0].arguments, ["alice"]);
@@ -60,9 +71,10 @@ describe("handlerRegister", () => {
     });
 
     it("rejects a username that is already registered", async () => {
+        promptText.mock.mockImplementation(async () => "alice");
         getUser.mock.mockImplementation(async () => ({ id: "1", name: "alice" }));
 
-        await handlerRegister("register", "alice");
+        await handlerRegister("register");
 
         assert.equal(createUser.mock.callCount(), 0);
         assert.equal(setUser.mock.callCount(), 0);
@@ -70,23 +82,27 @@ describe("handlerRegister", () => {
         assert.equal(process.exitCode, 1);
     });
 
-    it("rejects a missing username", async () => {
+    it("rejects an empty username", async () => {
+        promptText.mock.mockImplementation(async () => "");
+
         await handlerRegister("register");
 
         assert.equal(getUser.mock.callCount(), 0);
         assert.equal(createUser.mock.callCount(), 0);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["Error: No username provided. Usage: register <username>"]);
+        assert.deepEqual(errors, ["Error: No username provided."]);
         assert.equal(process.exitCode, 1);
     });
 
     it("rejects a blank username", async () => {
-        await handlerRegister("register", "   ");
+        promptText.mock.mockImplementation(async () => "   ");
+
+        await handlerRegister("register");
 
         assert.equal(getUser.mock.callCount(), 0);
         assert.equal(createUser.mock.callCount(), 0);
         assert.equal(setUser.mock.callCount(), 0);
-        assert.deepEqual(errors, ["Error: No username provided. Usage: register <username>"]);
+        assert.deepEqual(errors, ["Error: No username provided."]);
         assert.equal(process.exitCode, 1);
     });
 });

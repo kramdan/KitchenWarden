@@ -28,21 +28,21 @@ Eventually this ends up being no more than "log right on in and check it out", b
    ```
    npm run migrate
    ```
-5. Register your profile. It becomes the current user:
+5. Register your profile. You will be prompted for a username, and the profile becomes the current user:
    ```
-   npm start -- register <username>
+   npm start -- register
    ```
 ## Usage
 
 ### Commands
 | Command | Purpose |
 |---|---|
-| `npm start -- register <username>` | Create a profile and make it the current user |
-| `npm start -- login <username> [password]` | Switch to an existing profile; the password is required if one is set |
+| `npm start -- register` | Prompt for a username, create a profile, and make it the current user |
+| `npm start -- login` | Prompt for a username, then switch to that profile; if it has a password, prompt for the password first |
 | `npm start -- list` | List all profiles with ID, email, and phone |
-| `npm start -- password <password>` | Set the current user's password |
-| `npm start -- email <address>` | Set the current user's email |
-| `npm start -- phone <number>` | Set the current user's phone number as 10 digits, e.g. `7036878555` |
+| `npm start -- password` | Prompt for a new password (12–128 characters, masked); if one is already set, prompt for the current password first |
+| `npm start -- email` | Prompt for the new email address; requires a password to be set first |
+| `npm start -- phone` | Prompt for the phone number as 10 digits, e.g. `7036878555`; requires a password to be set first |
 | `npm run typecheck` | Type-check the CLI codebase |
 
 ## Contributing
@@ -68,6 +68,16 @@ npm run start:build # This involves commands from the usage section above,
 ```bash
 npm run test
 ```
+
+### Reset users
+
+Deletes every registered user from the local database. This is destructive and cannot be undone, so run it only when you want to wipe all local profiles (Not included in prod build).
+
+```bash
+npm start -- reset
+```
+
+Prints `Users deleted`, or `Nothing to delete` if there are no users.
 
 Currently there is no plan to allow for others to contribute directly to this project, but feel free to check it out and send bug reports if there are any
 

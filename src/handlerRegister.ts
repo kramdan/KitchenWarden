@@ -1,16 +1,12 @@
 import { createUser } from "./lib/db/queries/users.js";
 import { getUser } from "./lib/db/queries/userget.js";
 import { setUser } from "./config.js";
+import { promptText } from "./lib/promptText.js";
 
-export async function handlerRegister(cmdName: string, ...args: string[]): Promise<void> {
-    if (args.length < 1) {
-        console.error("Error: No username provided. Usage: register <username>");
-        process.exitCode = 1;
-        return;
-    }
-    const username = args[0].trim();
+export async function handlerRegister(cmdName: string): Promise<void> {
+    const username = (await promptText("Enter username: ")).trim();
     if (!username) {
-        console.error("Error: No username provided. Usage: register <username>");
+        console.error("Error: No username provided.");
         process.exitCode = 1;
         return;
     }
