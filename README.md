@@ -13,6 +13,7 @@ Eventually this ends up being no more than "log right on in and check it out", b
 ### Prerequisites
 - Node.js 26 (see `.nvmrc`) and npm
 - A running PostgreSQL server with an empty database, such as `kwr_dev`
+- Docker (optional, only for the container run)
 
 ### Setup
 1. Install dependencies from the repository root:
@@ -30,19 +31,25 @@ Eventually this ends up being no more than "log right on in and check it out", b
    ```
 5. Register your profile. You will be prompted for a username, and the profile becomes the current user:
    ```
-   npm start -- register
+   npm run start:cli -- register
    ```
 ## Usage
 
+### Web page
+`npm run start:dev` and `npm run start:build` also serve a splash page at `http://127.0.0.1:3000`, bound to localhost only. Set `PORT` to use another port. The page has a Log in button that leads to a placeholder; web login is not available yet.
+
 ### Commands
+Run commands with `npm run start:cli -- <command>`. This is CLI only and does not start the web page. `npm run start:dev` and `npm run start:build` run the same commands and also serve the web page.
+
 | Command | Purpose |
 |---|---|
-| `npm start -- register` | Prompt for a username, create a profile, and make it the current user |
-| `npm start -- login` | Prompt for a username, then switch to that profile; if it has a password, prompt for the password first |
-| `npm start -- list` | List all profiles with ID, email, and phone |
-| `npm start -- password` | Prompt for a new password (12–128 characters, masked); if one is already set, prompt for the current password first |
-| `npm start -- email` | Prompt for the new email address; requires a password to be set first |
-| `npm start -- phone` | Prompt for the phone number as 10 digits, e.g. `7036878555`; requires a password to be set first |
+| `npm run start:cli -- register` | Prompt for a username, create a profile, and make it the current user |
+| `npm run start:cli -- login` | Prompt for a username, then switch to that profile; if it has a password, prompt for the password first |
+| `npm run start:cli -- list` | List all profiles with ID, email, and phone |
+| `npm run start:cli -- password` | Prompt for a new password (12–128 characters, masked); if one is already set, prompt for the current password first |
+| `npm run start:cli -- email` | Prompt for the new email address; requires a password to be set first |
+| `npm run start:cli -- phone` | Prompt for the phone number as 10 digits, e.g. `7036878555`; requires a password to be set first |
+| `npm run start:cli -- delete` | Prompt for the current password, then delete the current profile and clear the saved current user; requires a password to be set first |
 | `npm run typecheck` | Type-check the CLI codebase |
 
 ## Contributing
@@ -59,9 +66,22 @@ This will fail on first attempt, check setup section step 2 for instructions
 
 ```bash
 npm run build
-npm run start:build # This involves commands from the usage section above,
-                    # it will otherwise do nothing.
+npm run start:build # Serves the web page at http://127.0.0.1:3000 until Ctrl+C.
 ```
+
+### Docker
+
+The image runs the built `dist/` folder. It needs the local config mounted at run time, because the config holds your database URL and current user and must not be baked into the image.
+
+```bash
+npm run build
+docker build -t kitchenwarden .
+docker run --rm -it --network host \
+  -v "$PWD/src/kw.config.json:/app/dist/kw.config.json" \
+  kitchenwarden
+```
+
+`--network host` lets the container reach PostgreSQL and the web page on `127.0.0.1`, so this works on Linux only. To run a CLI command instead, pass it after the image name with `--no-web`, for example `... kitchenwarden node dist/index.js --no-web list`. The container runs as the `node` user (uid 1000), so the config file must be writable by that user, or saving the current user will fail.
 
 ### Run tests
 
@@ -74,10 +94,12 @@ npm run test
 Deletes every registered user from the local database. This is destructive and cannot be undone, so run it only when you want to wipe all local profiles (Not included in prod build).
 
 ```bash
-npm start -- reset
+npm run reset
 ```
 
 Prints `Users deleted`, or `Nothing to delete` if there are no users.
+
+`npm run reset` runs without the web page and exits when it is done.
 
 Currently there is no plan to allow for others to contribute directly to this project, but feel free to check it out and send bug reports if there are any
 
