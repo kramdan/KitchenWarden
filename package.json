@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node --experimental-test-module-mocks --import tsx --test tests/*.test.ts",
-    "start": "tsx ./src/index.ts",
+    "start:dev": "tsx ./src/dev/index.ts",
     "build": "tsc -p tsconfig.build.json",
     "start:build": "node ./dist/index.js",
-    "dev": "tsx ./src/dev/index.ts",
     "reset": "tsx ./src/dev/index.ts reset",
     "typecheck": "npx tsc --noEmit",
     "generate": "drizzle-kit generate",

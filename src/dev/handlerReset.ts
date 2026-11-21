@@ -1,4 +1,4 @@
-import { deleteUsers } from "../lib/db/queries/usersdelete.js";
+import { deleteUsers } from "./usersdelete.js";
 
 export async function handlerReset(cmdName: string): Promise<void> {
     const deleteCheck = await deleteUsers();

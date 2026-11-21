@@ -5,6 +5,10 @@ import { readConfig } from "../../../config.js";
 
 export async function getCurrentUser() {
   const currentUser = readConfig().currentUserName
-  const [result] = await db.select().from(users).where(currentUser ? ilike(users.name, currentUser) : undefined);
+  if (!currentUser) {
+    return undefined;
+  }
+  const pattern = currentUser.replace(/[\\%_]/g, (char: string) => `\\${char}`);
+  const [result] = await db.select().from(users).where(ilike(users.name, pattern));
   return result;
 }

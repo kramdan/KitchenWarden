@@ -16,10 +16,15 @@ export async function setUser(name: string): Promise<void> {
     writeConfig(newUser);
     console.log("User has been set");
     const result = await getCurrentUser();
-    if (!result.password) {
+    if (!result?.password) {
         console.log("User has no password, set it for security");
     }
     return;
+}
+
+export function clearUser(): void {
+    const { dbUrl } = readConfig();
+    writeConfig({ dbUrl, currentUserName: '' });
 }
 
 export function readConfig() {

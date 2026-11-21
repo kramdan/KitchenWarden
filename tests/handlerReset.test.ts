@@ -5,11 +5,11 @@ import type { User } from "../src/commandHandler.js";
 // Mocked so the test never deletes rows from the database.
 const deleteUsers = mock.fn(async (): Promise<User | undefined> => undefined);
 
-mock.module("../src/lib/db/queries/usersdelete.js", {
+mock.module("../src/dev/usersdelete.js", {
     exports: { deleteUsers },
 });
 
-const { handlerReset } = await import("../src/handlerReset.js");
+const { handlerReset } = await import("../src/dev/handlerReset.js");
 
 const originalExitCode = process.exitCode;
 
