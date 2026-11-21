@@ -8,7 +8,8 @@ import {
   pgTable,
   text,
   timestamp,
-  uuid, } from "drizzle-orm/pg-core";
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const foodTypeEnum = pgEnum("food_type", [
     "fruit",

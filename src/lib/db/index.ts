@@ -7,3 +7,7 @@ import { readConfig } from "../../config.js";
 const dbUrl = readConfig();
 const conn = postgres(dbUrl);
 export const db = drizzle(conn, { schema });
+
+export async function closeDb(): Promise<void> {
+    await conn.end();
+}

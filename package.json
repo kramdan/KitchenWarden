@@ -1,5 +1,5 @@
 {
-  "name": "kitchenwarroom",
+  "name": "kitchenwarden",
   "version": "1.0.0",
   "description": "Application for the tracking of stats for pantry, fridge, and freezer goods and assisting in the tracking of recipes and weekly+ meal planning",
   "main": "index.js",
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kramdan/KitchenWarRoom.git"
+    "url": "git+https://github.com/kramdan/KitchenWarden.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kramdan/KitchenWarRoom/issues"
+    "url": "https://github.com/kramdan/KitchenWarden/issues"
   },
-  "homepage": "https://github.com/kramdan/KitchenWarRoom#readme",
+  "homepage": "https://github.com/kramdan/KitchenWarden#readme",
   "type": "module",
   "devDependencies": {
     "@types/node": "^26.6.6",
