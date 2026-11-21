@@ -1,6 +1,10 @@
+import { middlewareLoggedIn } from "./commandHandler.js";
 import { CommandRegistry, registerCommand, runCommand } from "./commandsRegistry.js";
+import { handlerEmail } from "./handlerEmail.js";
 import { handlerList } from "./handlerList.js";
 import { handlerLogin } from "./handlerLogin.js";
+import { handlerPassword } from "./handlerPassword.js";
+import { handlerPhone } from "./handlerPhone.js";
 import { handlerRegister } from "./handlerRegister.js";
 import { handlerReset } from "./handlerReset.js";
 
@@ -11,6 +15,9 @@ async function main() {
     registerCommand(commandsReg, 'login', handlerLogin);
     registerCommand(commandsReg, 'reset', handlerReset);
     registerCommand(commandsReg, 'list', handlerList);
+    registerCommand(commandsReg, 'email', middlewareLoggedIn(handlerEmail));
+    registerCommand(commandsReg, 'phone', middlewareLoggedIn(handlerPhone));
+    registerCommand(commandsReg, 'password', middlewareLoggedIn(handlerPassword));
 
     const cmd = process.argv.slice(2);
 

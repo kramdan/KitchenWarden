@@ -20,6 +20,6 @@ export async function handlerRegister(cmdName: string, ...args: string[]): Promi
         return;
     }
     await createUser(username);
-    setUser(username);
+    await setUser(username);
     console.log(`User "${username}" has been registered.`);
 }

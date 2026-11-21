@@ -1,19 +1,25 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getCurrentUser } from './lib/db/queries/getCurrentUser.js';
 
 type Config = {
     dbUrl: string;
     currentUserName: string;
 }
 
-export function setUser(name: string): void {
+export async function setUser(name: string): Promise<void> {
     const newUser: Config = {
         dbUrl: JSON.parse(fs.readFileSync(getConfigFilePath(), 'utf-8')).db_url,
         currentUserName: name
     }
     writeConfig(newUser);
     console.log("User has been set");
+    const result = await getCurrentUser();
+    if (!result.password) {
+        console.log("User has no password, set it for security");
+    }
+    return;
 }
 
 export function readConfig() {

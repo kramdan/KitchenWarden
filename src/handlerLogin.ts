@@ -1,8 +1,10 @@
 import { setUser } from "./config.js";
+import { verifyPassword } from "./handlerPassword.js";
 import { getUser } from "./lib/db/queries/userget.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
     const username = args[0]?.trim();
+    const password = args[1]?.trim();
     if (!username) {
         console.error("Error: No username provided. Usage: login <username>");
         process.exitCode = 1;
@@ -13,5 +15,16 @@ export async function handlerLogin(cmdName: string, ...args: string[]): Promise<
         process.exitCode = 1;
         return;
     }
-    setUser(username);
+    const user = await getUser(username);
+    if (user.password) {
+        if (password == undefined) {
+            console.error("password invalid");
+            return;
+        }
+        if (!await verifyPassword(password, user.password)) {
+            console.error("password invalid");
+            return;
+        }
+    }
+    await setUser(username);
 }
