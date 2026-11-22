@@ -1,4 +1,0 @@
-{
-  "db_url": "postgresql://USER:PASSWORD@127.0.0.1:5432/kwr_dev",
-  "current_user_name": ""
-}

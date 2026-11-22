@@ -1,5 +1,5 @@
 import { setUser } from "../config.js";
-import { verifyPassword } from "./handlerPassword.js";
+import { verifyPassword } from "../lib/password.js";
 import { getUser } from "../lib/db/queries/userget.js";
 import { promptSecret } from "../lib/prompt.js";
 import { promptText } from "../lib/promptText.js";

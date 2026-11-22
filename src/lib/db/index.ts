@@ -2,10 +2,14 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import * as schema from "./schema.js";
-import { readConfig } from "../../config.js";
 
-const cfg = readConfig();
-const conn = postgres(cfg.dbUrl);
+// Loaded from src/.env by src/env.ts, which must be imported before this module.
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error("Missing required environment variable: DATABASE_URL");
+}
+
+const conn = postgres(databaseUrl);
 export const db = drizzle(conn, { schema });
 
 export async function closeDb(): Promise<void> {

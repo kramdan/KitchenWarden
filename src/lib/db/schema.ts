@@ -48,6 +48,8 @@ export const users = pgTable("users", {
   password: text("password"),
 });
 
+export type User = typeof users.$inferSelect;
+
 export const foodItems = pgTable(
   "food_items",
   {

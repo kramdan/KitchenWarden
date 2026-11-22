@@ -1,6 +1,6 @@
 import { clearUser } from "../config.js";
-import type { User } from "./commandHandler.js";
-import { verifyPassword } from "./handlerPassword.js";
+import type { User } from "../lib/db/schema.js";
+import { verifyPassword } from "../lib/password.js";
 import { deleteUsers } from "../lib/db/queries/userdelete.js";
 import { promptSecret } from "../lib/prompt.js";
 

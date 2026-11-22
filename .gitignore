@@ -7,4 +7,3 @@ node_modules/
 *.log
 npm-debug.log*
 .vscode/
-src/kw.config.json

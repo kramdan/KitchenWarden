@@ -9,7 +9,6 @@
     "start:build": "node ./dist/main.js",
     "start:cli": "tsx ./src/dev/index.ts",
     "start:dev": "tsx ./src/main.ts",
-    "reset": "tsx ./src/dev/index.ts reset --no-web",
     "typecheck": "npx tsc --noEmit",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate"

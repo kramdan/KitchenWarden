@@ -1,5 +1,5 @@
 import { getCurrentUser } from "../lib/db/queries/getCurrentUser.js";
-import { users } from "../lib/db/schema.js";
+import type { User } from "../lib/db/schema.js";
 
 type LoggedInHandler = (
     cmdName: string,
@@ -17,5 +17,3 @@ export function middlewareLoggedIn(handler: LoggedInHandler) {
         return handler(cmdName, user);
     };
 }
-
-export type User = typeof users.$inferSelect;

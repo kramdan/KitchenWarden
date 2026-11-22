@@ -1,4 +1,4 @@
-import { User } from "./commandHandler.js";
+import { User } from "../lib/db/schema.js";
 import { setPhone } from "../lib/db/queries/setPhone.js";
 import { promptText } from "../lib/promptText.js";
 

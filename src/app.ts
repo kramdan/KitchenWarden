@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 import { Dependencies } from "./dependencies.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { errorHandler, sendErrorPage } from "./errors.js";
+import { createHomeRouter } from "./routes/home.js";
+import { createAuthRouter } from "./routes/auth.js";
+import { createAccountRouter } from "./routes/account.js";
 
 export function createApp(deps: Dependencies): express.Express {
 
@@ -47,7 +50,10 @@ export function createApp(deps: Dependencies): express.Express {
     // Begin route initializations
     const assetsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "assets");
     app.use("/assets", express.static(assetsDir, { dotfiles: "ignore" }));
+    app.use(createHomeRouter(deps));
     app.use(express.static(viewsDir, { index: "index.html", dotfiles: "ignore" }));
+    app.use(createAuthRouter(deps));
+    app.use(createAccountRouter(deps));
 
 // At this point if no page has been found, sending a 404 error page
     app.use((_req, res) => {

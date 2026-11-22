@@ -1,4 +1,4 @@
-import { User } from "./commandHandler.js";
+import { User } from "../lib/db/schema.js";
 import { setEmail } from "../lib/db/queries/setEmail.js";
 import { promptText } from "../lib/promptText.js";
 

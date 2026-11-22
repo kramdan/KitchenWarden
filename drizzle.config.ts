@@ -1,18 +1,17 @@
-import "dotenv/config";
-import fs from 'fs';
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import path from "path";
 import { fileURLToPath } from "url";
 
-const filePath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'kw.config.json');
-const cfg = JSON.parse(fs.readFileSync( filePath, 'utf-8' ));
-if (!cfg) throw new Error("No config found");
+config({ path: fileURLToPath(new URL("./src/.env", import.meta.url)) });
+
+const url = process.env.DATABASE_URL;
+if (!url) throw new Error("Missing required environment variable: DATABASE_URL");
 
 export default defineConfig({
   schema: "src/lib/db/schema.ts",
   out: "src/lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: cfg.db_url,
+    url,
   },
 });

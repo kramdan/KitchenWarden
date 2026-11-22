@@ -1,10 +1,8 @@
-import { config } from "dotenv";
-import { fileURLToPath } from "node:url";
+import "./env.js";
 import { initDependencies } from "./dependencies.js";
 import { createApp } from "./app.js";
 import { closeDb } from "./lib/db/index.js";
 
-config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
 const deps = initDependencies();
 let server;
 

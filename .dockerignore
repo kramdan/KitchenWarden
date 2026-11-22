@@ -7,4 +7,3 @@ docs
 .vscode
 .opencode
 .env*
-**/kw.config.json

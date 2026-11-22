@@ -37,7 +37,7 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     .send(
       renderPage(
         "Application Error",
-        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">Bearly Secure</a></nav>
+        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">KitchenWarden</a></nav>
         <p class="eyebrow">Error 500</p>
         <h1>Something went wrong</h1>
         <p class="subtitle">The request failed, please try again later</p>
@@ -71,7 +71,7 @@ export function sendErrorPage(
     .send(
       renderPage(
         title,
-        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">Bearly Secure</a></nav>
+        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">KitchenWarden</a></nav>
         <p class="eyebrow">Error ${statusCode}</p>
         <h1>${escapeHtml(title)}</h1>
         <p class="subtitle">${escapeHtml(message)}</p>

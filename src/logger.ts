@@ -19,7 +19,7 @@ const REDACTED_KEYS = new Set([
   "originalName",
 ]);
 
-const logPath = join(process.cwd(), "data", "bearly-secure.log");
+const logPath = join(process.cwd(), "data", "kitchenwarden.log");
 
 export function logEvent(eventName: string, fields: LogFields = {}): void {
   mkdirSync(dirname(logPath), { recursive: true });

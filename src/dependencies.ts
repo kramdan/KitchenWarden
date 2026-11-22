@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { openDatabase, type Db } from "./lib/db/index.js";
 
 export type Dependencies = {
@@ -30,7 +29,6 @@ function parseNonNegativeInteger(value: string, name: string): number {
 
 export function initDependencies(
   env: NodeJS.ProcessEnv = process.env,
-  cwd: string = process.cwd(),
 ): Dependencies {
   const port = parseNonNegativeInteger(env.PORT ?? "3000", "PORT");
   if (port > 65_535) {
@@ -46,7 +44,7 @@ export function initDependencies(
   const values = {
     appOrigin: new URL(env.APP_ORIGIN ?? "http://localhost:3000").origin,
     port,
-    databasePath: env.DATABASE_URL ?? join(cwd, "data", "bearly-secure.sqlite"),
+    databasePath: requireENV("DATABASE_URL"),
     maxRequestBodyBytes: 32 * 1024,
     maxUploadBytes: 1024 * 1024,
     trustedProxyHops: trustedProxyHops,
