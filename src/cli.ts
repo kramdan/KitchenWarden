@@ -23,17 +23,15 @@ export async function runCli(extraCommands: Record<string, CommandHandler> = {})
     }
 
     const args = process.argv.slice(2);
-    const webEnabled = !args.includes("--no-web");
     const cmd = args.filter((arg) => arg !== "--no-web");
 
     if (cmd.length > 0) {
         await runCommand(commandsReg, cmd[0]);
-    } else if (!webEnabled) {
+    } else {
         const err = new Error("Must insert a command and arguments 'command: arguments'");
         console.log(err.message);
         process.exitCode = 1;
     }
-    if (!webEnabled) {
-        process.exit(process.exitCode ?? 0);
-    }
+    process.exit(process.exitCode ?? 0);
+
 }

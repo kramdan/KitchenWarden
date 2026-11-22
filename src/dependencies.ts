@@ -37,14 +37,6 @@ export function initDependencies(
     throw new Error("PORT must be no greater than 65535");
   }
 
-  const acornFulfillmentDelayMs = Number(env.ACORN_FULFILLMENT_DELAY_MS ?? "0");
-  if (
-    !Number.isFinite(acornFulfillmentDelayMs) ||
-    acornFulfillmentDelayMs < 0
-  ) {
-    throw new Error("ACORN_FULFILLMENT_DELAY_MS must be a non-negative number");
-  }
-
   const downloadSigningKey = requireENV("DOWNLOAD_SIGNING_KEY");
   if (downloadSigningKey.length != 64) {
     throw new Error("DOWNLOAD_SIGNING_KEY length must equal 64");
@@ -55,7 +47,6 @@ export function initDependencies(
     appOrigin: new URL(env.APP_ORIGIN ?? "http://localhost:3000").origin,
     port,
     databasePath: env.DATABASE_URL ?? join(cwd, "data", "bearly-secure.sqlite"),
-    acornFulfillmentDelayMs,
     maxRequestBodyBytes: 32 * 1024,
     maxUploadBytes: 1024 * 1024,
     trustedProxyHops: trustedProxyHops,
