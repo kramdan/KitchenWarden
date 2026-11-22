@@ -7,7 +7,6 @@ import { handlerLogin } from "./handlerLogin.js";
 import { handlerPassword } from "./handlerPassword.js";
 import { handlerPhone } from "./handlerPhone.js";
 import { handlerRegister } from "./handlerRegister.js";
-import { startServer } from "./server.js";
 
 
 export async function runCli(extraCommands: Record<string, CommandHandler> = {}) {
@@ -27,9 +26,6 @@ export async function runCli(extraCommands: Record<string, CommandHandler> = {})
     const webEnabled = !args.includes("--no-web");
     const cmd = args.filter((arg) => arg !== "--no-web");
 
-    if (webEnabled) {
-        startServer();
-    }
     if (cmd.length > 0) {
         await runCommand(commandsReg, cmd[0]);
     } else if (!webEnabled) {

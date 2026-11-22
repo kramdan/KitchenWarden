@@ -11,3 +11,11 @@ export const db = drizzle(conn, { schema });
 export async function closeDb(): Promise<void> {
     await conn.end();
 }
+
+export type Db = typeof db;
+
+// Returns the shared Postgres connection. Postgres enforces foreign keys by
+// default, so no per-connection pragma is needed.
+export function openDatabase(): Db {
+  return db;
+}

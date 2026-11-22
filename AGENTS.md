@@ -71,7 +71,7 @@ of an unrelated change.
   environment files. Read the lockfile only when diagnosing a dependency change.
 - Do not edit agent definitions, generated migrations, lockfiles, local config or
   data files, or binary assets unless the task requires it.
-- No network calls, telemetry, analytics, remote assets, or backend beyond the localhost-only Express static server in `src/server.ts` (started by `npm run start:dev`, or `npm run start:build` after build). Local-first
+- No network calls, telemetry, analytics, remote assets, or backend beyond the localhost-only Express static server in `src/main.ts` (started by `npm run start:dev`, or `npm run start:build` after build). Local-first
   is a product constraint, not an implementation detail.
 - Do not run database reset or user reset without explicit approval. Do not leave
   dev servers running.
