@@ -36,9 +36,6 @@ permissions:
   - action: "glob"
     resource: "*"
     effect: allow
-  - action: "git"
-    resource: "*"
-    effect: ask
   - action: "grep"
     resource: "*"
     effect: allow

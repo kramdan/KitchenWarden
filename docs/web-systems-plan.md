@@ -1,5 +1,7 @@
 # Web Systems Plan
 
+Superseded by `docs/web-first-plan.md` (Part A). Decisions are recorded there.
+
 Status: draft for review. Scope: Phase 0, decision 1 (web first, CLI later).
 Companion: `docs/web-session-plan.md` (sessions and authentication, security-sensitive).
 

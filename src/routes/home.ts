@@ -6,6 +6,10 @@ export function createHomeRouter(deps: Dependencies): express.Router {
     const router = express.Router();
 
     router.get("/", (_req, res) => {
+        if (res.locals.user) {
+            res.redirect("/account");
+            return;
+        }
         res.type("html").send(renderIndexPage());
     });
 

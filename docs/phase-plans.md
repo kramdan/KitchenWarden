@@ -65,7 +65,10 @@ file moved aside. The config files were deleted by you.
 
 The earlier typecheck errors in four query files are resolved; the typecheck run confirms it.
 
-## Phase 2: Web features
+## Phase 2: Web features (complete)
+
+Status: complete. Tests are deferred to the final sweep in Phase 5, once everything else is done.
+Changes made during implementation are recorded in `docs/web-first-plan.md` (update block at the top).
 
 Detailed in `docs/web-first-plan.md`, Part A "Order of work" and Part B. Summary:
 
@@ -80,6 +83,34 @@ Detailed in `docs/web-first-plan.md`, Part A "Order of work" and Part B. Summary
    `src/views/layout.ts`.
 6. Tests, typecheck, build, test run, and a `start:dev` smoke test. Then stop the server.
 
+Step 1 decisions (recorded):
+
+- Passwords are set at registration through the web app. CLI accounts without a password
+  get one through the CLI before the CLI is removed.
+- Account list is deprecated and not ported.
+- Login error: "Username or password was incorrect" for unknown user and wrong password.
+- Session lifetime: 60 minutes idle, 24 hours absolute.
+- `kw_session` is set with `Secure`. Browser check on `127.0.0.1` is still to do.
+- Rate limiter: 5 failures in 15 minutes per key (username and client IP), temporary block.
+- Cache-busting approved: versioned asset URLs from a startup content hash, a long cache
+  lifetime for versioned assets, and `Cache-Control: no-store` on auth and account pages.
+
+Step 1 addendum (decided after the CLI rules review):
+
+- Usernames: first and last name stored separately, lowercase, unique. Needs a schema change
+  and a migration. Format rules and handling of existing accounts are open (see questions).
+- Email and phone numbers: unique. A duplicate gets a readable message, not a database error.
+- Legacy SHA-256 password hashes are not accepted.
+- Cookie parsing: the `cookie-parser` package.
+
+Usernames (decided): first and last name, each letters only (a-z), stored lowercase, unique
+as a pair. Email is stored lowercase. Existing dev accounts are removed before the migration.
+
+Migration status: `npm run generate` needs an interactive terminal (drizzle asks whether
+`first_name` and `last_name` are renamed from `name`). Answer "create" for both and "delete"
+for `name`, since the name is split rather than renamed. Review the generated SQL, then run
+`npm run migrate` after the dev users are removed.
+
 Gates:
 
 - Migration: you review and apply it to the dev database. The `food_items` abort check should
@@ -89,6 +120,13 @@ Gates:
   `127.0.0.1`, cookie parsing without a package, rate limit values).
 
 ## Phase 3: Remove the CLI
+
+Status: ready to start.
+
+- Gate: met. The dev accounts are removed, so no account depends on a CLI-set password.
+- Decision needed: remove `src/dev/index.ts` with the CLI (recommended). Keep `handlerReset.ts` and `usersdelete.ts`.
+- Also remove `src/lib/db/queries/userslist.ts`, which only the CLI `list` command uses.
+- Tests in `tests/` are replaced in the Phase 5 sweep, not in this phase.
 
 Gate: Phase 2 verified, and every existing account can sign in on the web. Accounts created
 through the CLI need a password set through the CLI first.

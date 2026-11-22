@@ -1,4 +1,47 @@
-export function renderPage(title: string, body: string): string {
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ASSETS_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "assets");
+
+// The URL carries a hash of the file contents, so a changed stylesheet gets a new URL
+// and browsers do not keep serving the old one. Read once at startup; a missing file
+// stops the app at startup rather than failing on the first page.
+export function versionedAssetUrl(file: string): string {
+  const hash = createHash("sha256")
+    .update(readFileSync(join(ASSETS_DIR, file)))
+    .digest("hex")
+    .slice(0, 12);
+  return `/assets/${file}?v=${hash}`;
+}
+
+const RESET_CSS_URL = versionedAssetUrl("reset.css");
+const STYLES_CSS_URL = versionedAssetUrl("styles.css");
+
+// Menu data for a signed-in user. Pages rendered without it show only the brand.
+export type SignedInNav = { csrfToken: string };
+
+function renderHeader(nav?: SignedInNav): string {
+  const brand = '<a class="brand-link" href="/">KitchenWarden</a>';
+  if (!nav) {
+    return `<nav class="page-nav" aria-label="Primary">${brand}</nav>`;
+  }
+  return `<nav class="page-nav" aria-label="Primary">${brand}
+      <details class="menu">
+        <summary class="menu-toggle" aria-label="Menu">&#9776;</summary>
+        <div class="menu-panel">
+          <a href="/account">Account</a>
+          <form method="post" action="/auth/logout">
+            <input type="hidden" name="csrf_token" value="${escapeHtml(nav.csrfToken)}">
+            <button class="menu-item" type="submit">Sign out</button>
+          </form>
+        </div>
+      </details>
+    </nav>`;
+}
+
+export function renderPage(title: string, body: string, nav?: SignedInNav): string {
   const documentTitle =
     title === "Kitchen Warden" ? title : `${title} - Kitchen Warden`;
 
@@ -8,10 +51,11 @@ export function renderPage(title: string, body: string): string {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${escapeHtml(documentTitle)}</title>
-    <link rel="stylesheet" href="/reset.css">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="${RESET_CSS_URL}">
+    <link rel="stylesheet" href="${STYLES_CSS_URL}">
   </head>
   <body>
+    ${renderHeader(nav)}
     <main>
       ${body}
     </main>

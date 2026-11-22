@@ -1,5 +1,6 @@
 import { renderPage } from "./layout.js";
 
+// The home page is for anonymous visitors only. Signed-in users are redirected to /account.
 export function renderIndexPage(): string {
   return renderPage(
     "Kitchen Warden",

@@ -1,5 +1,7 @@
 # Web Session and Authentication Plan
 
+Superseded by `docs/web-first-plan.md` (Part B). Decisions are recorded there.
+
 Status: draft for review. Scope: Phase 0, decision 4. This area is security-sensitive:
 no implementation until approved.
 Companion: `docs/web-systems-plan.md` (routes, rendering convention, and file list).

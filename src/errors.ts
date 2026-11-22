@@ -2,6 +2,7 @@ import type { ErrorRequestHandler, Response } from "express";
 import multer from "multer";
 import { escapeHtml, renderPage } from "./views/layout.js";
 import { logEvent } from "./logger.js";
+import { siteNav } from "./lib/auth/nav.js";
 
 export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   const details = error instanceof Error ? error : new Error(String(error));
@@ -37,12 +38,12 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     .send(
       renderPage(
         "Application Error",
-        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">KitchenWarden</a></nav>
-        <p class="eyebrow">Error 500</p>
+        `<p class="eyebrow">Error 500</p>
         <h1>Something went wrong</h1>
         <p class="subtitle">The request failed, please try again later</p>
         <article class="card">
         </article>`,
+        siteNav(res.locals),
       ),
     );
 };
@@ -71,11 +72,11 @@ export function sendErrorPage(
     .send(
       renderPage(
         title,
-        `<nav class="page-nav" aria-label="Primary"><a class="brand-link" href="/">KitchenWarden</a></nav>
-        <p class="eyebrow">Error ${statusCode}</p>
+        `<p class="eyebrow">Error ${statusCode}</p>
         <h1>${escapeHtml(title)}</h1>
         <p class="subtitle">${escapeHtml(message)}</p>
-        <p class="page-action"><a class="button-link" href="/">Return to the store</a></p>`,
+        <p class="page-action"><a class="button-link" href="/">Return home</a></p>`,
+        siteNav(response.locals),
       ),
     );
 }

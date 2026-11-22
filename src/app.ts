@@ -5,13 +5,14 @@ import { fileURLToPath } from "node:url";
 import { Dependencies } from "./dependencies.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { errorHandler, sendErrorPage } from "./errors.js";
+import cookieParser from "cookie-parser";
+import { resolveSession } from "./lib/auth/middleware.js";
 import { createHomeRouter } from "./routes/home.js";
 import { createAuthRouter } from "./routes/auth.js";
 import { createAccountRouter } from "./routes/account.js";
 
 export function createApp(deps: Dependencies): express.Express {
 
-    const viewsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "views");
     const app = express();
     app.set("trust proxy", deps.trustedProxyHops);
     app.use((_req, res, next) => {
@@ -49,9 +50,25 @@ export function createApp(deps: Dependencies): express.Express {
 
     // Begin route initializations
     const assetsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "assets");
-    app.use("/assets", express.static(assetsDir, { dotfiles: "ignore" }));
+    // Cache policy. Pages that carry session data or CSRF tokens are never stored by the
+    // browser or a proxy. The splash page is revalidated on each visit. Assets are versioned
+    // in layout.ts, so they can be cached for a long time.
+    const isPrivatePath = (requestPath: string) => /^\/(auth|account)(\/|$)/.test(requestPath);
+    app.use((req, res, next) => {
+        if (req.path === "/") {
+            res.set("Cache-Control", "no-cache");
+        } else if (isPrivatePath(req.path)) {
+            res.set("Cache-Control", "no-store");
+        }
+        next();
+    });
+    app.use("/assets", express.static(assetsDir, { dotfiles: "ignore", maxAge: "1y", immutable: true }));
+    // Parsers and session resolution come after the static assets, so asset requests never
+    // reach the database.
+    app.use(cookieParser());
+    app.use(express.urlencoded({ extended: false, limit: deps.maxRequestBodyBytes }));
+    app.use(resolveSession);
     app.use(createHomeRouter(deps));
-    app.use(express.static(viewsDir, { index: "index.html", dotfiles: "ignore" }));
     app.use(createAuthRouter(deps));
     app.use(createAccountRouter(deps));
 

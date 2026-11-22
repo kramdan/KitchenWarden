@@ -6,6 +6,22 @@ this file too.
 
 Scope: Phase 0 of moving KitchenWarden from CLI and web to web only.
 
+**Update after implementation (this block overrides the sections below where they conflict):**
+
+- Login uses email and password. Email is required at registration, stored in lowercase, and unique.
+- Registration takes first name, last name, email, password, and confirm password. Names are letters only, stored in lowercase, and unique as a pair.
+- Login error: "Email or password incorrect" for both an unknown email and a wrong password.
+- Sessions store `expires_at`. Idle timeout is 60 minutes, and the absolute limit is 24 hours from creation. The session cookie has `Max-Age` of 24 hours.
+- Anonymous forms use the `kw_csrf` cookie. Signed-in forms use the session's CSRF token.
+- Rate limit: 5 failures per email and per client IP in a 15-minute window, then a temporary block.
+- Cookies are parsed with the `cookie-parser` package.
+- The account page is at `/account`. It has change email, change phone, change password (ends all sessions and starts a new one), and delete account.
+- Signed-in pages show a full-width white header. The brand is centered, and a menu at the right has an Account link and Sign out.
+- The home page redirects signed-in users to `/account`.
+- The confirm-password field turns red when it does not match the password field.
+- The error page button says "Return home".
+- Passwords are argon2id only. Legacy SHA-256 hashes are not accepted.
+
 ## Phase 0 decisions (recorded)
 
 1. Build the web systems first, then remove the CLI.
@@ -182,16 +198,14 @@ before changing `package.json` again.
 
 ## Open questions (Part A)
 
-1. **Accounts without a password.** Accounts created through the CLI may have no password,
-   and web login cannot verify them. Allowing a first web login to set a password would let
-   anyone who knows a username take over that account. **Recommendation:** set passwords
-   for all existing accounts through the CLI before the CLI is removed. Do not add a web
+1. **Passwords at registration.** Decided: passwords are set on registration through the
+   web app. The password is required (12-128 characters). Accounts that exist without a
+   password must be given one through the CLI before the CLI is removed. There is no
    "set password on first login" path.
-2. **Account list.** The CLI `list` shows every profile's email and phone. Showing that to
-   every signed-in user is a privacy leak. **Recommendation:** do not port `list`, or show
-   names only until there is a role model.
-3. **Login errors.** Use one generic message for unknown user and wrong password, so
-   usernames cannot be enumerated. **Recommendation:** yes.
+2. **Account list.** Decided: deprecated. The CLI `list` is not ported, and no web route
+   shows other users' details.
+3. **Login errors.** Decided: unknown user and wrong password both show "Username or
+   password was incorrect".
 4. **Validation rules.** Confirm the CLI rules (username, password length, phone format)
    carry over unchanged.
 5. **Splash page.** Convert `index.html` to `renderIndexPage` now, as step 2.
@@ -247,7 +261,7 @@ Following the rendering convention in Part A:
   - `created_at` timestamp, default now
   - `last_seen_at` timestamp, default now
   - `expires_at` timestamp, not null
-- Expiry: 30 minutes idle and 12 hours absolute. Idle expiry is refreshed on each request.
+- Expiry: 60 minutes idle and 24 hours absolute. Idle expiry is refreshed on each request.
   **Recommendation:** these values, as constants in `src/lib/auth/session.ts`.
 
 ### Cookie
@@ -255,8 +269,7 @@ Following the rendering convention in Part A:
 - Name `kw_session`. Flags: `HttpOnly`, `SameSite=Strict`, `Path=/`, `Secure`.
 - Modern browsers accept `Secure` cookies on `localhost` and `127.0.0.1` over HTTP. Check
   this in the browsers you use before relying on it.
-- Parse the cookie header with a small internal function in `src/lib/auth/cookie.ts`. This
-  avoids adding `cookie-parser` as a dependency. Ask first if you prefer the package.
+- Parse cookies with the `cookie-parser` package, mounted in `src/app.ts`. Decided.
 
 ### Login (`POST /auth/login`)
 
@@ -265,7 +278,7 @@ Following the rendering convention in Part A:
    a dummy argon2 hash so response time does not reveal which usernames exist.
 3. On success, create a new session with a fresh token. Never reuse a token issued before
    login (session fixation). Set the cookie and redirect to `/account`.
-4. On failure, re-render with `renderLoginPage` using one generic message for unknown user
+4. On failure, re-render with `renderLoginPage` using "Username or password was incorrect" for unknown user
    and wrong password.
 5. Users with no password cannot sign in on the web (see Part A, open question 1).
 6. Log the event with `logEvent` (user ID, IP, outcome). Never log passwords, tokens, or the
@@ -303,7 +316,7 @@ Following the rendering convention in Part A:
 
 - Failed logins are counted per username and per client IP. Client IP uses
   `trustedProxyHops` from `src/dependencies.ts`.
-- **Recommendation:** after 5 failures in 15 minutes for a key, reject further attempts for
+- **Decided:** after 5 failures in 15 minutes for a key, reject further attempts for
   that key until the window passes. Use a delay or a temporary block, not an account
   lockout, so an attacker cannot lock someone out of their own account.
 - Counters are in memory. They reset when the server restarts, which is acceptable for a
@@ -367,12 +380,12 @@ Following the rendering convention in Part A:
 
 ## Open questions (Part B)
 
-1. **Session lifetime.** 30 minutes idle and 12 hours absolute. Confirm or change.
-2. **Secure cookie over HTTP.** Confirm your browsers store `Secure` cookies on `127.0.0.1`.
-   If not, drop `Secure` for local development only and keep it in production builds.
-3. **Cookie parsing without a package.** Confirm the small internal parser is acceptable
-   instead of adding `cookie-parser`.
-4. **Rate limit values.** Confirm 5 failures in 15 minutes per key.
+1. **Session lifetime.** Decided: 60 minutes idle and 24 hours absolute.
+2. **Secure cookies.** Decided: `kw_session` is set with `Secure`. Still to check in the
+   browsers you use, on `127.0.0.1`.
+3. **Cookie parsing.** Decided: use the `cookie-parser` package.
+4. **Rate limit.** Decided: implement the rate limiter at 5 failures in 15 minutes per key
+   (username and client IP), using a temporary block rather than an account lockout.
 
 ## Verification (Part B)
 
