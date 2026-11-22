@@ -1,8 +1,8 @@
-import { setUser } from "./config.js";
+import { setUser } from "../config.js";
 import { verifyPassword } from "./handlerPassword.js";
-import { getUser } from "./lib/db/queries/userget.js";
-import { promptSecret } from "./lib/prompt.js";
-import { promptText } from "./lib/promptText.js";
+import { getUser } from "../lib/db/queries/userget.js";
+import { promptSecret } from "../lib/prompt.js";
+import { promptText } from "../lib/promptText.js";
 
 export async function handlerLogin(cmdName: string): Promise<void> {
     const username = (await promptText("Enter username: ")).trim();

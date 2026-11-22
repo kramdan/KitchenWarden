@@ -1,6 +1,6 @@
 import { User } from "./commandHandler.js";
-import { setEmail } from "./lib/db/queries/setEmail.js";
-import { promptText } from "./lib/promptText.js";
+import { setEmail } from "../lib/db/queries/setEmail.js";
+import { promptText } from "../lib/promptText.js";
 
 // Practical email check: local part (no leading, trailing, or doubled dots),
 // "@", one or more dot-separated domain labels, and a top-level domain of 2+ letters.

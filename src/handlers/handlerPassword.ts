@@ -1,8 +1,8 @@
 import { hash, timingSafeEqual} from "node:crypto";
 import argon2 from "argon2";
 import { User } from "./commandHandler.js";
-import { setPassword } from "./lib/db/queries/setPassword.js";
-import { promptSecret } from "./lib/prompt.js";
+import { setPassword } from "../lib/db/queries/setPassword.js";
+import { promptSecret } from "../lib/prompt.js";
 
 export const MAX_PASSWORD_LENGTH = 128;
 const LEGACY_SHA256_PATTERN = /^[a-f0-9]{64}$/i;

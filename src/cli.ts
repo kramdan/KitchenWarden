@@ -1,12 +1,12 @@
-import { middlewareLoggedIn } from "./commandHandler.js";
-import { CommandHandler, CommandRegistry, registerCommand, runCommand } from "./commandsRegistry.js";
-import { handlerDelete } from "./handlerDelete.js";
-import { handlerEmail } from "./handlerEmail.js";
-import { handlerList } from "./handlerList.js";
-import { handlerLogin } from "./handlerLogin.js";
-import { handlerPassword } from "./handlerPassword.js";
-import { handlerPhone } from "./handlerPhone.js";
-import { handlerRegister } from "./handlerRegister.js";
+import { middlewareLoggedIn } from "./handlers/commandHandler.js";
+import { CommandHandler, CommandRegistry, registerCommand, runCommand } from "./handlers/commandsRegistry.js";
+import { handlerDelete } from "./handlers/handlerDelete.js";
+import { handlerEmail } from "./handlers/handlerEmail.js";
+import { handlerList } from "./handlers/handlerList.js";
+import { handlerLogin } from "./handlers/handlerLogin.js";
+import { handlerPassword } from "./handlers/handlerPassword.js";
+import { handlerPhone } from "./handlers/handlerPhone.js";
+import { handlerRegister } from "./handlers/handlerRegister.js";
 
 
 export async function runCli(extraCommands: Record<string, CommandHandler> = {}) {

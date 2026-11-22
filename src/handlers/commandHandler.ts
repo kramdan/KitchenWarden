@@ -1,5 +1,5 @@
-import { getCurrentUser } from "./lib/db/queries/getCurrentUser.js";
-import { users } from "./lib/db/schema.js";
+import { getCurrentUser } from "../lib/db/queries/getCurrentUser.js";
+import { users } from "../lib/db/schema.js";
 
 type LoggedInHandler = (
     cmdName: string,

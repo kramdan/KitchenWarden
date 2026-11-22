@@ -1,7 +1,7 @@
-import { createUser } from "./lib/db/queries/users.js";
-import { getUser } from "./lib/db/queries/userget.js";
-import { setUser } from "./config.js";
-import { promptText } from "./lib/promptText.js";
+import { createUser } from "../lib/db/queries/users.js";
+import { getUser } from "../lib/db/queries/userget.js";
+import { setUser } from "../config.js";
+import { promptText } from "../lib/promptText.js";
 
 export async function handlerRegister(cmdName: string): Promise<void> {
     const username = (await promptText("Enter username: ")).trim();

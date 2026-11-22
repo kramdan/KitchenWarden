@@ -1,6 +1,6 @@
 import { User } from "./commandHandler.js";
-import { setPhone } from "./lib/db/queries/setPhone.js";
-import { promptText } from "./lib/promptText.js";
+import { setPhone } from "../lib/db/queries/setPhone.js";
+import { promptText } from "../lib/promptText.js";
 
 // Ten digits with no country code (e.g. 7036878555). Area code and exchange must start with 2-9.
 export const PHONE_REGEX = /^[2-9]\d{2}[2-9]\d{6}$/;

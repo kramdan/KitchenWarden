@@ -1,8 +1,8 @@
-import { clearUser } from "./config.js";
+import { clearUser } from "../config.js";
 import type { User } from "./commandHandler.js";
 import { verifyPassword } from "./handlerPassword.js";
-import { deleteUsers } from "./lib/db/queries/userdelete.js";
-import { promptSecret } from "./lib/prompt.js";
+import { deleteUsers } from "../lib/db/queries/userdelete.js";
+import { promptSecret } from "../lib/prompt.js";
 
 export async function handlerDelete(cmdName: string, user: User): Promise<void> {
     if (!user.password) {

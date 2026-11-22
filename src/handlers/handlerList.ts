@@ -1,4 +1,4 @@
-import { listUsers } from "./lib/db/queries/userslist.js";
+import { listUsers } from "../lib/db/queries/userslist.js";
 
 
 export async function handlerList() {
