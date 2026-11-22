@@ -72,11 +72,6 @@ export function escapeHtml(value: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export function formatMoney(cents: number): string {
-  const amount = (Math.abs(cents) / 100).toFixed(2);
-  return cents < 0 ? `-$${amount}` : `$${amount}`;
-}
-
 export function renderAccountLink(displayName: string): string {
   return `<a href="/account">Hello, ${escapeHtml(displayName)}</a>`;
 }

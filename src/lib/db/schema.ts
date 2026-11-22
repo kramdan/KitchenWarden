@@ -58,8 +58,8 @@ export const users = pgTable("users", {
 
 export type User = typeof users.$inferSelect;
 
-// Expiry is decided by isSessionExpired (src/lib/auth/session.ts), which reads created_at and
-// updated_at. The expired flag records that decision once a session has timed out.
+// expires_at is the time after which a session is invalid; src/lib/auth/session.ts sets it on
+// create and refresh. The expired flag is set when a request finds the session past that time.
 export const sessions = pgTable(
   "sessions",
   {

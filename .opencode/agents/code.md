@@ -67,7 +67,13 @@ permissions:
     resource: "npm start *"
     effect: allow
   - action: "shell"
+    resource: "npm start"
+    effect: allow
+  - action: "shell"
     resource: "npm test *"
+    effect: allow
+  - action: "shell"
+    resource: "npm test"
     effect: allow
   - action: "shell"
     resource: "npm run db:reset"
@@ -149,9 +155,6 @@ commands, conventions, and boundaries for this repository.
   Do not stage, commit, push, pull, fetch, or otherwise contact a remote; do not run
   destructive history commands such as `git reset --hard`, `git clean`, or
   `git filter-branch`; and do not run ad-hoc non-git commands.
-- Delete a file only with `npm run clean:tmp -- <path>`, and only when its name
-  ends in `.tmp.md`. Do not use `rm`, `git rm`, or any other delete path, and
-  never delete source, config, data, generated, or lock files.
 - Use the `security` subagent for read-only security audits. Use the `cleanup`
   subagent for read-only duplication, unused-code, CLI/mobile parity, and
   post-refactor verification analysis. Execute its plan in order and verify
@@ -166,10 +169,8 @@ commands, conventions, and boundaries for this repository.
 - Locate before reading: `grep`/`glob`, then read only matching ranges. Batch
   independent searches and reads in one step. Do not read a whole directory to
   build context.
-- Never read `node_modules/`, `dist/`, `mobile/dist/`, `data/`, `.expo/`,
-  `package-lock.json`, `src/kwr.config.json`, or `.env*` without a specific
-  reason. Ask before reading `.env*`.
-- `mobile/App.tsx` is large; read only the component or section you need.
+- Never read `node_modules/`, `dist/`, `data/`, `package-lock.json`, or `.env*`
+  without a specific reason. Ask before reading `.env*`.
 - Do not re-read a file after editing unless verification fails; trust the edit
   result.
 - Make the smallest coherent change and match the style of the file you edit.
