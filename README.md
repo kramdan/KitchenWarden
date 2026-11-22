@@ -20,37 +20,36 @@ Eventually this ends up being no more than "log right on in and check it out", b
    ```
    npm install
    ```
-2. Copy the example config to the local config path (gitignored):
+2. Create the local environment file. It is gitignored:
    ```
-   cp src/kw.config.example.json src/kw.config.json
+   cp src/.env.example src/.env
    ```
-3. Edit `src/kw.config.json` and set `db_url` to your PostgreSQL connection string, for example `postgresql://USER:PASSWORD@127.0.0.1:5432/kwr_dev`. Leave `current_user_name` empty; the CLI fills it in.
-4. Apply the database migrations:
+   Edit `src/.env` and set:
+   - `DATABASE_URL`: your PostgreSQL connection string, for example `postgresql://USER:PASSWORD@127.0.0.1:5432/kwr_dev`
+   - `DOWNLOAD_SIGNING_KEY`: 64 hexadecimal characters. You can generate one with `openssl rand -hex 32`
+3. Apply the database migrations:
    ```
    npm run migrate
    ```
-5. Register your profile. You will be prompted for a username, and the profile becomes the current user:
+4. Start the server, then open the site:
    ```
-   npm run start:cli -- register
+   npm run start:dev
    ```
+   Open `http://localhost:3000`.
+5. Sign up at `/auth/register` with your first and last name, an email address, and a password of 12 to 128 characters.
+
 ## Usage
 
-### Web page
-`npm run start:dev` and `npm run start:build` also serve a splash page at `http://127.0.0.1:3000`, bound to localhost only. Set `PORT` to use another port. The page has a Log in button that leads to a placeholder; web login is not available yet.
+### Web pages
+- `/` is the home page. Signed-in users are redirected to `/account`.
+- `/auth/register` creates an account. Names contain letters only. Email is required and is stored in lowercase.
+- `/auth/login` signs in with your email and password.
+- `/account` changes your email, phone number, or password, or deletes your account.
+- The menu at the top right of each signed-in page links to your account and signs you out.
 
-### Commands
-Run commands with `npm run start:cli -- <command>`. This is CLI only and does not start the web page. `npm run start:dev` and `npm run start:build` run the same commands and also serve the web page.
+`npm run start:dev` and `npm run start:build` serve the site on localhost only. Set `PORT` to use another port.
 
-| Command | Purpose |
-|---|---|
-| `npm run start:cli -- register` | Prompt for a username, create a profile, and make it the current user |
-| `npm run start:cli -- login` | Prompt for a username, then switch to that profile; if it has a password, prompt for the password first |
-| `npm run start:cli -- list` | List all profiles with ID, email, and phone |
-| `npm run start:cli -- password` | Prompt for a new password (12–128 characters, masked); if one is already set, prompt for the current password first |
-| `npm run start:cli -- email` | Prompt for the new email address; requires a password to be set first |
-| `npm run start:cli -- phone` | Prompt for the phone number as 10 digits, e.g. `7036878555`; requires a password to be set first |
-| `npm run start:cli -- delete` | Prompt for the current password, then delete the current profile and clear the saved current user; requires a password to be set first |
-| `npm run typecheck` | Type-check the CLI codebase |
+Sessions end 60 minutes after the last request, and at most 24 hours after sign-in. Failed logins are limited to 5 in 15 minutes per email and per client IP. The counters are kept in memory and reset when the server restarts.
 
 ## Contributing
 
@@ -62,26 +61,30 @@ cd KitchenWarden
 ```
 
 ### Build and run the project
-This will fail on first attempt, check setup section step 2 for instructions
+This needs `src/.env` (see Setup, step 2).
 
 ```bash
 npm run build
-npm run start:build # Serves the web page at http://127.0.0.1:3000 until Ctrl+C.
+npm run start:build # Serves the site at http://localhost:3000 until Ctrl+C.
+```
+
+### Type-check
+
+```bash
+npm run typecheck
 ```
 
 ### Docker
 
-The image runs the built `dist/` folder. It needs the local config mounted at run time, because the config holds your database URL and current user and must not be baked into the image.
+The image runs the built `dist/` folder. The database URL and signing key are supplied at run time from an env file. They are never copied into the image.
 
 ```bash
 npm run build
 docker build -t kitchenwarden .
-docker run --rm -it --network host \
-  -v "$PWD/src/kw.config.json:/app/dist/kw.config.json" \
-  kitchenwarden
+docker run --rm -it --network host --env-file src/.env kitchenwarden
 ```
 
-`--network host` lets the container reach PostgreSQL and the web page on `127.0.0.1`, so this works on Linux only. To run a CLI command instead, pass it after the image name with `--no-web`, for example `... kitchenwarden node dist/index.js --no-web list`. The container runs as the `node` user (uid 1000), so the config file must be writable by that user, or saving the current user will fail.
+`--network host` lets the container reach PostgreSQL and the website on `127.0.0.1`, so this works on Linux only. The container runs as the `node` user (uid 1000). Logs are written inside the container and are lost when it is removed.
 
 ### Run tests
 
@@ -89,19 +92,11 @@ docker run --rm -it --network host \
 npm run test
 ```
 
+The test suite is being rewritten, so it may report no tests until that is done.
+
 ### Reset users
 
-Deletes every registered user from the local database. This is destructive and cannot be undone, so run it only when you want to wipe all local profiles (Not included in prod build).
-
-```bash
-npm run reset
-```
-
-Prints `Users deleted`, or `Nothing to delete` if there are no users.
-
-`npm run reset` runs without the web page and exits when it is done.
-
-Currently there is no plan to allow for others to contribute directly to this project, but feel free to check it out and send bug reports if there are any
+Not available. The reset command was removed with the command-line tool. The reset code remains in `src/dev` and will return as a web route. That route needs explicit approval, because it deletes every registered user.
 
 ## Using Agents
 Agents are used in this project, though not solely or extensively, and there are included in the project some files that can assist you if you choose to use them yourself. You take responsibility for anything the agent or model writes at your instruction, and anything written by AI must be reviewed by a human before believing it ready for production and/or distribution.

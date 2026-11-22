@@ -6,7 +6,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-COPY dist ./dist
+COPY dist ./
+
+# Logs are written to ./data relative to the working directory, so the node user needs it.
+RUN mkdir -p data && chown node:node data
 
 USER node
-CMD ["node", "dist/index.js"]
+CMD ["node", "./main.js"]

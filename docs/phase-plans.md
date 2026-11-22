@@ -150,7 +150,9 @@ reset and the CLI. Recommendation: remove `src/dev/index.ts` with the CLI, and k
 
 After this phase, `npm run start:cli -- reset` no longer runs unless `src/dev/index.ts` is kept.
 
-## Phase 4: Docs and deployment
+## Phase 4: Docs and deployment (complete)
+
+Status: README rewritten for web-only use, Dockerfile starts `dist/main.js` and creates the logs folder for the node user, and the build no longer copies the views folder. Docker run uses `--env-file src/.env`.
 
 | File | Change |
 |---|---|
