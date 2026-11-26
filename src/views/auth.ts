@@ -12,7 +12,7 @@ export type RegisterPageInput = {
   values?: { firstName?: string; lastName?: string; email?: string };
 };
 
-const CONFIRM_PASSWORD_JS = versionedAssetUrl("confirm-password.js");
+const CONFIRM_PASSWORD_JS = versionedAssetUrl("confirm-password.js", "aesthetics");
 
 function errorBlock(error?: string): string {
   return error ? `<p class="error" role="alert">${escapeHtml(error)}</p>` : "";

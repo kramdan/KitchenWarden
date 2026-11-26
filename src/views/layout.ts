@@ -4,20 +4,22 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ASSETS_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "assets");
+const AESTHETICS_DIR = join(dirname(fileURLToPath(import.meta.url)), "aesthetics");
 
 // The URL carries a hash of the file contents, so a changed stylesheet gets a new URL
 // and browsers do not keep serving the old one. Read once at startup; a missing file
 // stops the app at startup rather than failing on the first page.
-export function versionedAssetUrl(file: string): string {
+export function versionedAssetUrl(file: string, mount: "assets" | "aesthetics" = "assets"): string {
+  const dir = mount === "assets" ? ASSETS_DIR : AESTHETICS_DIR;
   const hash = createHash("sha256")
-    .update(readFileSync(join(ASSETS_DIR, file)))
+    .update(readFileSync(join(dir, file)))
     .digest("hex")
     .slice(0, 12);
-  return `/assets/${file}?v=${hash}`;
+  return `/${mount === "assets" ? "assets" : "assets/aesthetics"}/${file}?v=${hash}`;
 }
 
-const RESET_CSS_URL = versionedAssetUrl("reset.css");
-const STYLES_CSS_URL = versionedAssetUrl("styles.css");
+const RESET_CSS_URL = versionedAssetUrl("styles/reset.css");
+const STYLES_CSS_URL = versionedAssetUrl("styles/styles.css");
 
 // Menu data for a signed-in user. Pages rendered without it show only the brand.
 export type SignedInNav = { csrfToken: string };

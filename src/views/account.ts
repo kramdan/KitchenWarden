@@ -15,7 +15,7 @@ export type AccountPageInput = {
   error?: string;
 };
 
-const CONFIRM_PASSWORD_JS = versionedAssetUrl("confirm-password.js");
+const CONFIRM_PASSWORD_JS = versionedAssetUrl("confirm-password.js", "aesthetics");
 
 export function renderAccountPage(input: AccountPageInput): string {
   const { user } = input;

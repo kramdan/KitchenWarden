@@ -53,7 +53,7 @@ describe("register page", () => {
 
   it("includes confirm-password.js with a content-hash version", () => {
     const html = renderRegisterPage({ csrfToken: "csrf-test" });
-    assert.match(html, /<script src="\/assets\/confirm-password\.js\?v=[0-9a-f]{12}" defer><\/script>/);
+    assert.match(html, /<script src="\/assets\/aesthetics\/confirm-password\.js\?v=[0-9a-f]{12}" defer><\/script>/);
   });
 });
 

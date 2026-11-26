@@ -63,6 +63,14 @@ export function createApp(deps: Dependencies): express.Express {
         next();
     });
     app.use("/assets", express.static(assetsDir, { dotfiles: "ignore", maxAge: "1y", immutable: true }));
+    app.use(
+        "/assets/aesthetics",
+        express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "views", "aesthetics"), {
+            dotfiles: "ignore",
+            maxAge: "1y",
+            immutable: true,
+        }),
+    );
     // Parsers and session resolution come after the static assets, so asset requests never
     // reach the database.
     app.use(cookieParser());

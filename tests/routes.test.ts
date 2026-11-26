@@ -218,7 +218,7 @@ describe("web routes", () => {
   });
 
   it("serves files under /assets", async () => {
-    const res = await get("/assets/confirm-password.js");
+    const res = await get("/assets/aesthetics/confirm-password.js");
     await res.text();
     assert.equal(res.status, 200);
   });
