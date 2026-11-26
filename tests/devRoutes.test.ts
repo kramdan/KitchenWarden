@@ -72,6 +72,7 @@ const stub = {
 } as unknown as Dependencies;
 
 const VALID_ENV = {
+  HOST: "127.0.0.1",
   DATABASE_URL: "postgres://test-user:test-password@localhost:5432/kitchenwarden_test",
   DOWNLOAD_SIGNING_KEY: "ab".repeat(32),
 };
@@ -79,17 +80,25 @@ const VALID_ENV = {
 describe("initDependencies devTools", () => {
   // requireENV reads process.env, not the env argument, so the required keys are set on process.env here
   // and the previous values are restored afterwards.
+  let savedHost: string | undefined;
   let savedDatabaseUrl: string | undefined;
   let savedSigningKey: string | undefined;
 
   before(() => {
+    savedHost = process.env.HOST;
     savedDatabaseUrl = process.env.DATABASE_URL;
     savedSigningKey = process.env.DOWNLOAD_SIGNING_KEY;
+    process.env.HOST = VALID_ENV.HOST;
     process.env.DATABASE_URL = VALID_ENV.DATABASE_URL;
     process.env.DOWNLOAD_SIGNING_KEY = VALID_ENV.DOWNLOAD_SIGNING_KEY;
   });
 
   after(() => {
+    if (savedHost === undefined) {
+      delete process.env.HOST;
+    } else {
+      process.env.HOST = savedHost;
+    }
     if (savedDatabaseUrl === undefined) {
       delete process.env.DATABASE_URL;
     } else {

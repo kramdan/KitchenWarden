@@ -34,6 +34,7 @@ function renderHeader(nav?: SignedInNav): string {
         <summary class="menu-toggle" aria-label="Menu">&#9776;</summary>
         <div class="menu-panel">
           <a href="/account">Account</a>
+          <a href="/pantry">Pantry</a>
           <form method="post" action="/auth/logout">
             <input type="hidden" name="csrf_token" value="${escapeHtml(nav.csrfToken)}">
             <button class="menu-item" type="submit">Sign out</button>

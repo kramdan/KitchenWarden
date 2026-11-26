@@ -11,6 +11,7 @@ import { createHomeRouter } from "./routes/home.js";
 import { createAuthRouter } from "./routes/auth.js";
 import { createAccountRouter } from "./routes/account.js";
 import { createDevRouter } from "./routes/dev.js";
+import { createPantryRouter } from "./routes/pantry.js";
 
 export function createApp(deps: Dependencies): express.Express {
 
@@ -51,7 +52,7 @@ export function createApp(deps: Dependencies): express.Express {
     // Cache policy. Pages that carry session data or CSRF tokens are never stored by the
     // browser or a proxy. The splash page is revalidated on each visit. Assets are versioned
     // in layout.ts, so they can be cached for a long time.
-    const isPrivatePath = (requestPath: string) => /^\/(auth|account)(\/|$)/.test(requestPath);
+    const isPrivatePath = (requestPath: string) => /^\/(auth|account|pantry)(\/|$)/.test(requestPath);
     app.use((req, res, next) => {
         if (req.path === "/") {
             res.set("Cache-Control", "no-cache");
@@ -81,6 +82,7 @@ export function createApp(deps: Dependencies): express.Express {
     app.use(createHomeRouter(deps));
     app.use(createAuthRouter(deps));
     app.use(createAccountRouter(deps));
+    app.use(createPantryRouter(deps));
 
 // At this point if no page has been found, sending a 404 error page
     app.use((_req, res) => {
