@@ -20,7 +20,7 @@ Run commands from the repository root.
 - Start the server with `npm run start:dev` to run it.
 - Type-check the codebase before finishing a change to it.
 - Database reset and user reset are destructive. Do not run them without
-  explicit approval. The reset code in `src/dev` has no npm script and no route.
+  explicit approval. The reset code in `src/dev` has no npm script. Its routes (`/health`, `/reset`) are in `src/routes/dev.ts` and mount only when `DEV_TOOLS=true`, which `npm run start:dev` sets.
 
 There is no lint or formatter. `npm test` runs the Node test runner (built-in
 `node:test`, no added dependencies) over `tests/*.test.ts`. Tests must not touch

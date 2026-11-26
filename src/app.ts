@@ -10,6 +10,7 @@ import { resolveSession } from "./lib/auth/middleware.js";
 import { createHomeRouter } from "./routes/home.js";
 import { createAuthRouter } from "./routes/auth.js";
 import { createAccountRouter } from "./routes/account.js";
+import { createDevRouter } from "./routes/dev.js";
 
 export function createApp(deps: Dependencies): express.Express {
 
@@ -40,9 +41,6 @@ export function createApp(deps: Dependencies): express.Express {
             xFrameOptions: { action: "sameorigin" },
             strictTransportSecurity: false,
         }));
-    app.get("/health", (_req, res) => {
-        res.json({ ok: true, app: "kitchen-warden" });
-    });
     // Make load shedder here
     // Make rate limiter here
 
@@ -76,6 +74,10 @@ export function createApp(deps: Dependencies): express.Express {
     app.use(cookieParser());
     app.use(express.urlencoded({ extended: false, limit: deps.maxRequestBodyBytes }));
     app.use(resolveSession);
+    if (deps.devTools) {
+        console.warn("Dev tools enabled: /health and /reset are available");
+        app.use(createDevRouter(deps));
+    }
     app.use(createHomeRouter(deps));
     app.use(createAuthRouter(deps));
     app.use(createAccountRouter(deps));

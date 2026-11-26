@@ -8,7 +8,7 @@ let server;
 
 try {
     const app = createApp(deps);
-    server = app.listen(deps.port, () => {
+    server = app.listen(deps.port, deps.host,() => {
         console.log(`Kitchen Warden is running at http://localhost:${deps.port}`);
     });
     server.headersTimeout = 10_000;

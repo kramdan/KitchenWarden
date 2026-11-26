@@ -38,6 +38,10 @@ Eventually this ends up being no more than "log right on in and check it out", b
    Open `http://localhost:3000`.
 5. Sign up at `/auth/register` with your first and last name, an email address, and a password of 12 to 128 characters.
 
+## Dev tools
+
+`npm run start:dev` sets `DEV_TOOLS=true`, which enables `/health` and `/reset`. `/reset` shows a confirmation page, and its button deletes every user account. Do not set `DEV_TOOLS` in `src/.env` or in the Docker run; those must keep the dev routes off.
+
 ## Usage
 
 ### Web pages
